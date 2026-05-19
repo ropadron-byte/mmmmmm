@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mensaje Especial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #fff0f5 0%, #fce4ec 30%, #f3e5f5 70%, #ede7f6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Lato', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Floating decorations */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    animation: float linear infinite;
+    opacity: 0;
+    z-index: 0;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    5% { opacity: 0.7; }
+    90% { opacity: 0.5; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Envelope / Landing */
+  .envelope-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    z-index: 10;
+    animation: fadeIn 1s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .envelope-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #c2185b;
+    letter-spacing: 2px;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(194, 24, 91, 0.15);
+  }
+
+  .envelope {
+    width: 280px;
+    height: 200px;
+    background: linear-gradient(135deg, #fff5f8, #fce4ec);
+    border-radius: 20px;
+    border: 2px solid #f8bbd0;
+    box-shadow: 0 8px 40px rgba(233, 30, 99, 0.15), 0 2px 8px rgba(0,0,0,0.08);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .envelope:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 16px 50px rgba(233, 30, 99, 0.2), 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .envelope::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(160deg, #f8bbd0 0%, #fce4ec 50%);
+    border-radius: 20px 20px 0 0;
+    clip-path: polygon(0 0, 100% 0, 50% 60%);
+    transition: transform 0.4s ease;
+  }
+
+  .envelope-icon {
+    font-size: 3.5rem;
+    z-index: 2;
+    filter: drop-shadow(0 2px 4px rgba(194,24,91,0.2));
+  }
+
+  .envelope-subtitle {
+    font-size: 0.85rem;
+    color: #ad1457;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .open-btn {
+    background: linear-gradient(135deg, #e91e63, #c2185b);
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 50px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(233,30,99,0.35);
+    transition: all 0.3s ease;
+  }
+
+  .open-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(233,30,99,0.45);
+    background: linear-gradient(135deg, #c2185b, #ad1457);
+  }
+
+  /* Letter */
+  .letter-wrapper {
+    display: none;
+    z-index: 10;
+    width: 100%;
+    max-width: 960px;
+    padding: 20px;
+    animation: openLetter 0.6s ease;
+  }
+
+  @keyframes openLetter {
+    from { opacity: 0; transform: scale(0.92) translateY(30px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .letter-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(255,240,248,0.95));
+    border-radius: 28px;
+    border: 1.5px solid rgba(248, 187, 208, 0.6);
+    box-shadow:
+      0 20px 60px rgba(194,24,91,0.12),
+      0 4px 16px rgba(0,0,0,0.06),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Decorative top border */
+  .letter-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #f8bbd0, #ce93d8, #b39ddb, #f8bbd0);
+  }
+
+  .letter-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 500px;
+  }
+
+  /* Text side */
+  .letter-text {
+    padding: 48px 40px 40px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    border-right: 1px dashed rgba(248,187,208,0.5);
+  }
+
+  .letter-body {
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: #5d4037;
+    font-weight: 300;
+  }
+
+  .letter-body p {
+    margin-bottom: 16px;
+  }
+
+  .letter-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Image side */
+  .letter-image {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, #fce4ec, #f3e5f5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+
+  .letter-image img {
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(194,24,91,0.18), 0 2px 8px rgba(0,0,0,0.1);
+    object-fit: cover;
+    position: relative;
+    z-index: 2;
+  }
+
+  .image-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.75rem;
+    color: #ad1457;
+    white-space: nowrap;
+    z-index: 3;
+    background: rgba(255,255,255,0.85);
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(248,187,208,0.6);
+  }
+
+  /* Small decorative corners */
+  .corner-deco {
+    position: absolute;
+    font-size: 1.2rem;
+    opacity: 0.35;
+  }
+  .corner-deco.tl { top: 12px; left: 12px; }
+  .corner-deco.tr { top: 12px; right: 12px; }
+  .corner-deco.bl { bottom: 12px; left: 12px; }
+  .corner-deco.br { bottom: 12px; right: 12px; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .letter-inner {
+      grid-template-columns: 1fr;
+    }
+    .letter-text {
+      padding: 36px 28px 28px 28px;
+      border-right: none;
+      border-bottom: 1px dashed rgba(248,187,208,0.5);
+    }
+    .letter-image {
+      padding: 28px 20px 40px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<div class="envelope-wrapper" id="envelopeView">
+  <p class="envelope-title">Tienes un mensaje especial</p>
+  <div class="envelope" onclick="openLetter()">
+    <span class="envelope-icon">💌</span>
+    <span class="corner-deco tl">🌷</span>
+    <span class="corner-deco tr">⭐</span>
+    <span class="corner-deco bl">⭐</span>
+    <span class="corner-deco br">🌷</span>
+  </div>
+  <p class="envelope-subtitle">Toca para abrir</p>
+  <button class="open-btn" onclick="openLetter()">Abrir carta</button>
+</div>
+
+<div class="letter-wrapper" id="letterView">
+  <div class="letter-card">
+    <div class="letter-inner">
+
+      <div class="letter-text">
+        <span class="corner-deco tl">🌷</span>
+        <span class="corner-deco bl">⭐</span>
+        <div class="letter-body">
+          <p>Te amo mucho amor, te quedo muy hermoso el dibujo :(</p>
+          <p>Perdon si sentiste que no lo aprecie, lo aprecie mucho mi amor, te despliego esta pagina de disculpa amor, de verdad lo siento</p>
+          <p>Te amo mucho mi vida, perdon porque tengas que tenerme paciencia siempre :(</p>
+        </div>
+      </div>
+
+      <div class="letter-image">
+        <span class="corner-deco tr">🌷</span>
+        <span class="corner-deco br">⭐</span>
+        <img src="data:image/jpeg;base64,IMGPLACEHOLDER" alt="Dibujo" />
+        <span class="image-caption">Tu dibujo</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Create floating particles (corazones, tulipanes y estrellas)
+  const symbols = ['💕', '🌷', '⭐', '✨', '💗', '🤍', '💫', '🌸'];
+  const container = document.getElementById('particles');
+
+  function createParticle() {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.fontSize = (Math.random() * 14 + 10) + 'px';
+    const dur = Math.random() * 10 + 12;
+    p.style.animationDuration = dur + 's';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    container.appendChild(p);
+    setTimeout(() => p.remove(), (dur + 10) * 1000);
+  }
+
+  for (let i = 0; i < 18; i++) createParticle();
+  setInterval(createParticle, 2000);
+
+  function openLetter() {
+    document.getElementById('envelopeView').style.display = 'none';
+    const lv = document.getElementById('letterView');
+    lv.style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
